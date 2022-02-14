@@ -92,4 +92,4 @@ docker ps -aq | % { docker stop $_ } | % { docker rm -f $_ } | docker images -f 
 
 ### Assignment Q&A Post
 Please post any questions about docker or otherwise to the post linked below:  
-[Link To Ed Discussion](https://edstem.org/us/courses/8458/discussion/691235)
+[Link To Ed Discussion](https://edstem.org/us/courses/16683/discussion/1141860)
