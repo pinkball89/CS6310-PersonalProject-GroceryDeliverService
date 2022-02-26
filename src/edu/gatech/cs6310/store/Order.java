@@ -30,7 +30,8 @@ public class Order {
         for (OrderLine ol: orderLines.values()) {
             joiner.add(ol.toString());
         }
-        return "orderID:" + getOrderID() + "\n" + joiner.toString();
+        String orderlineString = joiner.toString();
+        return "orderID:" + getOrderID() + (!orderlineString.isEmpty() ? "\n" + joiner : "");
     }
 
     public double getCurrentCost() {

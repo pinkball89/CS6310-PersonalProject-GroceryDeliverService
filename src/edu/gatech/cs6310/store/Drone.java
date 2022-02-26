@@ -68,6 +68,7 @@ public class Drone {
     public void setTripsLeft(int newTripsLeft) {
         this.tripsLeft = newTripsLeft;
     }
+
     public void addOrderToDrone(Order newOrder) {
         currentOrders.put(newOrder.getOrderID(), newOrder);
     }

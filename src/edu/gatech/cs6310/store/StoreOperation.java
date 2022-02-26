@@ -117,6 +117,7 @@ public class StoreOperation {
         Customer c = getCustomer(customerAccount);
         Order newOrder = new Order(orderID, d, c);
         s.addOrder(newOrder);
+        d.addOrderToDrone(newOrder);
     }
 
     public List<Order> getAllOrders(String storeName) {
