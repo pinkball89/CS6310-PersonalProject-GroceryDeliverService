@@ -10,7 +10,7 @@ public class Order {
     private String orderID;
     private Customer customer;
     private Drone drone;
-    private Map<String, OrderLine> orderLines = new HashMap<>();
+    private TreeMap<String, OrderLine> orderLines = new TreeMap<>();
     private boolean isDelivered;
     private OffsetDateTime expectedDeliveryTime;
 
@@ -53,6 +53,10 @@ public class Order {
         }
         return totalOrderWeight;
 
+    }
+
+    public boolean itemAlreadyExists(String itemName) {
+        return orderLines.containsKey(itemName);
     }
 
     public Drone getDrone() {

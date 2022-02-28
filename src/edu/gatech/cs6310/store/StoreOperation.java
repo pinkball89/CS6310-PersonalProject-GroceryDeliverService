@@ -3,10 +3,10 @@ package edu.gatech.cs6310.store;
 import java.util.*;
 
 public class StoreOperation {
-    Map<String, Store> allStores = new HashMap<>();
-    Map<String, Pilot> allPilots = new HashMap<>();
-    Map<String, Pilot> allLicenseIDs = new HashMap<>();
-    Map<String, Customer> allCustomers = new HashMap<>();
+    Map<String, Store> allStores = new TreeMap<>();
+    Map<String, Pilot> allPilots = new TreeMap<>();
+    Map<String, Pilot> allLicenseIDs = new TreeMap<>();
+    Map<String, Customer> allCustomers = new TreeMap<>();
 
     public void newStore(String name, double revenue) {
         Store newStore = new Store(name, revenue);
@@ -16,10 +16,7 @@ public class StoreOperation {
     }
 
     public List<Store> getAllStores() {
-        List<Store> result = new ArrayList<>();
-        allStores.forEach((k, v) -> result.add(v));
-        result.sort(Comparator.comparing(Store::getName));
-        return result;
+        return new ArrayList<>(allStores.values());
     }
 
     private Store getStore(String storeName) {
@@ -48,10 +45,7 @@ public class StoreOperation {
     }
 
     public List<Pilot> getAllPilots() {
-        List<Pilot> result = new ArrayList<>();
-        allPilots.forEach((k, v) -> result.add(v));
-        result.sort(Comparator.comparing(Pilot::getAccount));
-        return result;
+        return new ArrayList<>(allPilots.values());
     }
 
     private Pilot getPilot(String pilotAccount) {
@@ -99,10 +93,7 @@ public class StoreOperation {
     }
 
     public List<Customer> getAllCustomers() {
-        List<Customer> result = new ArrayList<>();
-        allCustomers.forEach((k, v) -> result.add(v));
-        result.sort(Comparator.comparing(Customer::getAccount));
-        return result;
+        return new ArrayList<>(allCustomers.values());
     }
 
     private Customer getCustomer(String customerAccount) {
@@ -113,6 +104,10 @@ public class StoreOperation {
 
     public void newOrder(String storeName, String orderID, String droneID, String customerAccount) {
         Store s = getStore(storeName);
+        if (s.orderAlreadyExists(orderID)) {
+            throw new StoreOperationException("order_identifier_already_exists");
+        }
+
         Drone d = s.getDrone(droneID);
         Customer c = getCustomer(customerAccount);
         Order newOrder = new Order(orderID, d, c);
@@ -141,12 +136,11 @@ public class StoreOperation {
         }
     }
 
-    public boolean isEnoughCapacity(OrderLine ol, Order o, Drone d) {
-        double currentOrderWeight = o.getCurrentOderWeight();
+    public boolean isEnoughCapacity(OrderLine ol, Drone d) {
         double orderLineWeight = ol.getOderLineWeight();
-        double droneCapacity = d.getCapacity();
+        double droneRemainingCapacity = d.remainingCap();
 
-        if (currentOrderWeight + orderLineWeight <= droneCapacity) {
+        if (orderLineWeight <= droneRemainingCapacity) {
             return true;
         } else {
             return false;
@@ -156,21 +150,25 @@ public class StoreOperation {
     public void newOrderLine(String storeName, String orderID, String itemName, int quantity, double unitPrice) {
         Store s = getStore(storeName);
         Order o = s.getOrderID(orderID);
+        Item item = s.getItem(itemName);
+        if (o.itemAlreadyExists(itemName)) {
+            throw new StoreOperationException("item_already_ordered");
+        }
+        
         Drone d = o.getDrone();
         Customer c = o.getCustomer();
-        Item item = s.getItem(itemName);
         OrderLine ol = new OrderLine(item, quantity, unitPrice);
         if (!isEnoughCredit(c, ol, o)) {
             throw new StoreOperationException("customer_cant_afford_new_item");
         }
-        if (!isEnoughCapacity(ol, o, d)) {
+        if (!isEnoughCapacity(ol, d)) {
             throw new StoreOperationException("drone_cant_carry_new_item");
         } else {
             o.addOrderLine(ol);
         }
     }
 
-    public void newDelivery(String storeName, String orderID) {
+    public void purchaseOrder(String storeName, String orderID) {
         Store s = getStore(storeName);
         Order o = s.getOrderID(orderID);
         Drone d = o.getDrone();
@@ -181,15 +179,14 @@ public class StoreOperation {
         }
         if (d.getTripsLeft() == 0) {
             throw new StoreOperationException("drone_needs_fuel");
-        }
-        else {
+        } else {
             double newCredit = c.getCredit() - o.getCurrentCost();
             c.setCredit(newCredit);
             double newRevenue = s.getSettledRevenue() + o.getCurrentCost();
             s.setSettledRevenue(newRevenue);
             int newTripsLeft = d.getTripsLeft() - 1;
             d.setTripsLeft(newTripsLeft);
-            int newExp = p.getExp()  + 1;
+            int newExp = p.getExp() + 1;
             p.setExp(newExp);
             s.remove(o);
             d.remove(o);
@@ -200,7 +197,9 @@ public class StoreOperation {
     public void cancelOrder(String storeName, String orderID) {
         Store s = getStore(storeName);
         Order o = s.getOrderID(orderID);
+        Drone d = o.getDrone();
         s.remove(o);
+        d.remove(o);
     }
 }
 

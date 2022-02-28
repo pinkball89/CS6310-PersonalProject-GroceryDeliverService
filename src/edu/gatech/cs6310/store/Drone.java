@@ -8,9 +8,8 @@ public class Drone {
 
     private String droneID;
     private double cap;
-    private double currentWeight = 0;
     private int tripsLeft;
-    private Map<String, Order> currentOrders = new HashMap<>();
+    private Map<String, Order> currentOrders = new TreeMap<>();
     private Pilot currentPilot;
 
     public Drone(String droneID, double capacity, int tripsLeft) {
@@ -35,11 +34,13 @@ public class Drone {
         return tripsLeft;
     }
 
+
     public double getCurrentWeight() {
+        double sum = 0;
         for (Order o : currentOrders.values()) {
-            currentWeight += o.getCurrentOderWeight();
+            sum += o.getCurrentOderWeight();
         }
-        return currentWeight;
+        return sum;
     }
 
     public double remainingCap() {

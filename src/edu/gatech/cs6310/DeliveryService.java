@@ -131,7 +131,7 @@ public class DeliveryService {
                 } else if (tokens[0].equals("purchase_order")) {
                     String storeName = tokens[1];
                     String orderID = tokens[2];
-                    storeOperation.newDelivery(storeName, orderID);
+                    storeOperation.purchaseOrder(storeName, orderID);
                     System.out.println("OK:change_completed");
 
                 } else if (tokens[0].equals("cancel_order")) {

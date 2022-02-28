@@ -13,15 +13,15 @@ public class OrderLine {
         this.item = item;
         this.quantity = quantity;
         this.unitPrice = unitPrice;
+        this.totalCost = quantity * unitPrice;
+        this.totalWeight = quantity * item.getWeight();
     }
 
     public double getOrderLineCost() {
-        totalCost = quantity * unitPrice;
         return totalCost ;
     }
 
     public double getOderLineWeight() {
-        totalWeight = quantity * item.getWeight();
         return totalWeight;
     }
 
@@ -35,5 +35,4 @@ public class OrderLine {
     public String toString() {
         return "item_name:" + getItemName() + ",total_quantity:" + getQuantity() + ",total_cost:" + formatter.format(getOrderLineCost())+ ",total_weight:" + formatter.format(getOderLineWeight());
     }
-
 }

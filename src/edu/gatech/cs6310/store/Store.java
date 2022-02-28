@@ -8,9 +8,9 @@ public class Store {
 
     private String name;
     private double settledRevenue;
-    private Map<String, Item> items = new HashMap<>();
-    private Map<String, Drone> drones = new HashMap<>();
-    private Map<String, Order> orders = new HashMap<>();
+    private Map<String, Item> items = new TreeMap<>();
+    private Map<String, Drone> drones = new TreeMap<>();
+    private Map<String, Order> orders = new TreeMap<>();
 
     public Store(String name, Double revenue) {
         this.name = name;
@@ -35,10 +35,7 @@ public class Store {
     }
 
     public List<Item> getAllItems() {
-        List<Item> result = new ArrayList<>();
-        items.forEach((k, v) -> result.add(v));
-        result.sort(Comparator.comparing(Item::getItemName));
-        return result;
+        return new ArrayList<>(items.values());
     }
 
     public void addDrone(Drone newDrone) {
@@ -47,10 +44,7 @@ public class Store {
     }
 
     public List<Drone> getAllDrones() {
-        List<Drone> result = new ArrayList<>();
-        drones.forEach((k, v) -> result.add(v));
-        result.sort(Comparator.comparing(Drone::getDroneID));
-        return result;
+        return new ArrayList<>(drones.values());
     }
 
    public Drone getDrone(String droneID) {
@@ -67,11 +61,12 @@ public class Store {
         orders.put(newOrder.getOrderID(), newOrder);
     }
 
+    public boolean orderAlreadyExists(String orderId) {
+        return orders.containsKey(orderId);
+    }
+
     public List<Order> getAllOrders() {
-        List<Order> result = new ArrayList<>();
-        orders.forEach((k, v) -> result.add(v));
-        result.sort(Comparator.comparing(Order::getOrderID));
-        return result;
+        return new ArrayList<>(orders.values());
     }
 
     public Order getOrderID(String orderID) {
