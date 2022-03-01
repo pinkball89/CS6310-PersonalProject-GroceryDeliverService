@@ -9,7 +9,7 @@ public class Pilot extends Employee {
     private Drone currentDrone;
 
     public Pilot(String account, String firstName, String lastName, String phone, String taxID, String licenseID, int successfulDeliveries) {
-        super(account, firstName, lastName, phone, taxID, 0);
+        super(account, firstName, lastName, phone, taxID, 0, 0);
         this.licenseID = licenseID;
         this.account = account;
         this.successfulDeliveries = successfulDeliveries;

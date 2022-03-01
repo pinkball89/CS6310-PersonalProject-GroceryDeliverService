@@ -10,9 +10,7 @@ public class Order {
     private String orderID;
     private Customer customer;
     private Drone drone;
-    private TreeMap<String, OrderLine> orderLines = new TreeMap<>();
-    private boolean isDelivered;
-    private OffsetDateTime expectedDeliveryTime;
+    private Map<String, OrderLine> orderLines = new TreeMap<>();
 
     public Order(String orderID, Drone d, Customer c) {
         this.orderID = orderID;
