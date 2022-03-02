@@ -1,7 +1,5 @@
 package edu.gatech.cs6310.store;
 
-import java.util.*;
-
 public class Pilot extends Employee {
     private String licenseID;
     private String account;
@@ -14,8 +12,6 @@ public class Pilot extends Employee {
         this.account = account;
         this.successfulDeliveries = successfulDeliveries;
     }
-
-
 
     public String getPhone() {
         return phone;

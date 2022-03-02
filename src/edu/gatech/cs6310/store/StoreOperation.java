@@ -3,72 +3,52 @@ package edu.gatech.cs6310.store;
 import java.util.*;
 
 public class StoreOperation {
-    Map<String, Store> allStores = new TreeMap<>();
-    Map<String, Pilot> allPilots = new TreeMap<>();
-    Map<String, Pilot> allLicenseIDs = new TreeMap<>();
-    Map<String, Customer> allCustomers = new TreeMap<>();
+    GlobalData globalData = new GlobalData();
 
     public void newStore(String name, double revenue) {
         Store newStore = new Store(name, revenue);
-        if (allStores.containsKey(name)) throw new StoreOperationException("store_identifier_already_exists");
-
-        allStores.put(newStore.getName(), newStore);
+        globalData.putNewStore(newStore);
     }
 
     public List<Store> getAllStores() {
-        return new ArrayList<>(allStores.values());
-    }
-
-    private Store getStore(String storeName) {
-        if (!allStores.containsKey(storeName)) throw new StoreOperationException("store_identifier_does_not_exist");
-        return allStores.get(storeName);
+        return globalData.getAllStores();
     }
 
     public void newItem(String storeName, String itemName, double itemWeight) {
-        Store s = getStore(storeName);
+        Store s = globalData.getStore(storeName);
         Item newItem = new Item(itemName, itemWeight);
         s.addItem(newItem);
     }
 
     public List<Item> getAllItems(String storeName) {
-        Store s = getStore(storeName);
+        Store s = globalData.getStore(storeName);
         return s.getAllItems();
     }
 
-    public Pilot newPilot(String account, String firstName, String lastName, String phone, String taxID, String licenseID, int successfulDeliveries) {
+    public void newPilot(String account, String firstName, String lastName, String phone, String taxID, String licenseID, int successfulDeliveries) {
         Pilot newPilot = new Pilot(account, firstName, lastName, phone, taxID, licenseID, successfulDeliveries);
-        if (allPilots.containsKey(account)) throw new StoreOperationException("pilot_identifier_already_exists");
-        if (allLicenseIDs.containsKey(licenseID)) throw new StoreOperationException("pilot_license_already_exists");
-        allPilots.put(newPilot.getAccount(), newPilot);
-        allLicenseIDs.put(newPilot.getLicenseID(), newPilot);
-        return newPilot;
+        globalData.putNewPilot(newPilot);
     }
 
     public List<Pilot> getAllPilots() {
-        return new ArrayList<>(allPilots.values());
-    }
-
-    private Pilot getPilot(String pilotAccount) {
-        if (!allPilots.containsKey(pilotAccount)) throw new StoreOperationException("pilot_identifier_does_not_exist");
-        return allPilots.get(pilotAccount);
+        return globalData.getAllPilots();
     }
 
     public void newDrone(String storeName, String droneID, double capacity, int tripsLeft) {
-        Store s = getStore(storeName);
+        Store s = globalData.getStore(storeName);
         Drone newDrone = new Drone(droneID, capacity, tripsLeft);
         s.addDrone(newDrone);
     }
 
     public List<Drone> getAllDrones(String storeName) {
-        Store s = getStore(storeName);
+        Store s = globalData.getStore(storeName);
         return s.getAllDrones();
-
     }
 
     public void flyDrone(String storeName, String droneID, String pilotAccount) {
-        Store s = getStore(storeName);
+        Store s = globalData.getStore(storeName);
         Drone drone = s.getDrone(droneID);
-        Pilot pilot = getPilot(pilotAccount);
+        Pilot pilot = globalData.getPilot(pilotAccount);
 
         Pilot oldPilot = drone.getPilot();
         Drone oldDrone = pilot.getDrone();
@@ -85,38 +65,30 @@ public class StoreOperation {
         drone.addPilot(pilot);
     }
 
-    public Customer newCustomer(String account, String firstName, String lastName, String phone, int rating, double credit) {
+    public void newCustomer(String account, String firstName, String lastName, String phone, int rating, double credit) {
         Customer newCustomer = new Customer(account, firstName, lastName, phone, rating, credit);
-        if (allCustomers.containsKey(account)) throw new StoreOperationException("customer_identifier_already_exists");
-        allCustomers.put(newCustomer.getAccount(), newCustomer);
-        return newCustomer;
+        globalData.putNewCustomer(newCustomer);
     }
 
     public List<Customer> getAllCustomers() {
-        return new ArrayList<>(allCustomers.values());
-    }
-
-    private Customer getCustomer(String customerAccount) {
-        if (!allCustomers.containsKey(customerAccount))
-            throw new StoreOperationException("customer_identifier_does_not_exist");
-        return allCustomers.get(customerAccount);
+        return globalData.getAllCustomers();
     }
 
     public void newOrder(String storeName, String orderID, String droneID, String customerAccount) {
-        Store s = getStore(storeName);
+        Store s = globalData.getStore(storeName);
         if (s.orderAlreadyExists(orderID)) {
             throw new StoreOperationException("order_identifier_already_exists");
         }
 
         Drone d = s.getDrone(droneID);
-        Customer c = getCustomer(customerAccount);
+        Customer c = globalData.getCustomer(customerAccount);
         Order newOrder = new Order(orderID, d, c);
         s.addOrder(newOrder);
         d.addOrderToDrone(newOrder);
     }
 
     public List<Order> getAllOrders(String storeName) {
-        Store s = getStore(storeName);
+        Store s = globalData.getStore(storeName);
         return s.getAllOrders();
     }
 
@@ -148,7 +120,7 @@ public class StoreOperation {
     }
 
     public void newOrderLine(String storeName, String orderID, String itemName, int quantity, double unitPrice) {
-        Store s = getStore(storeName);
+        Store s = globalData.getStore(storeName);
         Order o = s.getOrderID(orderID);
         Item item = s.getItem(itemName);
         if (o.itemAlreadyExists(itemName)) {
@@ -169,7 +141,7 @@ public class StoreOperation {
     }
 
     public void purchaseOrder(String storeName, String orderID) {
-        Store s = getStore(storeName);
+        Store s = globalData.getStore(storeName);
         Order o = s.getOrderID(orderID);
         Drone d = o.getDrone();
         Customer c = o.getCustomer();
@@ -195,7 +167,7 @@ public class StoreOperation {
     }
 
     public void cancelOrder(String storeName, String orderID) {
-        Store s = getStore(storeName);
+        Store s = globalData.getStore(storeName);
         Order o = s.getOrderID(orderID);
         Drone d = o.getDrone();
         s.remove(o);

@@ -1,12 +1,10 @@
 package edu.gatech.cs6310.store;
 
-import java.time.OffsetDateTime;
-import java.util.*;
-
-import static edu.gatech.cs6310.DeliveryService.formatter;
+import java.util.Map;
+import java.util.StringJoiner;
+import java.util.TreeMap;
 
 public class Order {
-    private Store store;
     private String orderID;
     private Customer customer;
     private Drone drone;

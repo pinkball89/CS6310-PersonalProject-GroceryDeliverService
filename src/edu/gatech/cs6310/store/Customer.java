@@ -5,7 +5,6 @@ import static edu.gatech.cs6310.DeliveryService.formatter;
 public class Customer extends User {
     private int rating;
     private double credit;
-    private String address;
 
     public Customer(String account, String firstName, String lastName, String phone, int rating, double credit){
         super(account, firstName, lastName, phone);
